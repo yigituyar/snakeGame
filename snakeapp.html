@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="canvas" height="300" width="300" style="border: 1px solid black;"></canvas>
+    <button onclick="game.growTheSnake();"></button>
+    <script>
+        const HEIGHT = 300;
+        const WIDTH = 300;
+        const RECT_HEIGHT = 20;
+        const RECT_WIDTH = 20;
+
+        class Game {
+            constructor() {
+
+                this.height = RECT_HEIGHT;
+                this.width = RECT_WIDTH;
+
+                this.Rectangles = [];
+                this.frameCount = 0;
+                this.i = 0;
+                this.lastKeydown;
+                this.j = 0;
+            }
+            start() {
+
+
+                this.Rectangles.push(this.createRect(40, 40));
+                this.Rectangles.push(this.createRect(20, 40));
+                this.Rectangles.push(this.createRect(0, 40));
+
+
+                this.loop = setInterval(this.gameLoop.bind(this), 10);
+            }
+            gameLoop() {
+                this.update();
+            }
+            setDirection() {
+
+                document.addEventListener('keyup', event => {
+                    this.lastKeydown = event.code;
+                });
+
+            }
+            update() {
+                
+                //document.addEventListener('keyup', event => {
+                //       switch (event.code) {
+                //        case '':
+                //            
+                //            break;
+                //       
+                //        default:
+                //            break;
+                //       }
+                //})
+                this.frameCount++;
+                this.setDirection();
+
+                /*
+                yukarı basıldığında
+               
+                arrayin son elemanı length-1
+
+                rect[1].x = rect[0].x;
+                rect[1].y = rect[0].y;
+                rect[0] yukarı çık
+                */
+
+
+                
+                 
+                    if (this.frameCount % 20 === 0) {
+                    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+                    //this.Rectangles[0].x+=20;
+                    for (let i = this.Rectangles.length - 1; i > 0; i--) {
+                        this.Rectangles[i].x = this.Rectangles[i - 1].x;
+                        this.Rectangles[i].y = this.Rectangles[i - 1].y;
+                    }
+                    switch (this.lastKeydown) {
+                        case 'ArrowUp':
+
+                            this.Rectangles[0].y -= 20;
+                            break;
+                        case 'ArrowDown':
+                            this.Rectangles[0].y += 20;
+                            break;
+                        case 'ArrowRight':
+                            this.Rectangles[0].x += 20;
+                            break;
+                        case 'ArrowLeft':
+                            this.Rectangles[0].x -= 20;
+                            break;
+                        default:
+                            this.Rectangles[0].x += 20;
+
+                            break;
+                    }
+                    for (let i = 0 ; i < this.Rectangles.length; i++) {
+                        this.createRect(this.Rectangles[i].x, this.Rectangles[i].y);
+
+                    }
+
+
+                }
+            }
+            /* 
+            if direcTionState != lastKeyPressed 
+            basılan son tuşla yön farklıysa 
+            yönü değiştir
+            changeDirection{
+
+            }
+
+            aynıysa devam et
+            
+            */
+
+
+
+            createRect(x, y) {
+                const grd = ctx.createLinearGradient(0, 0, 200, 0);
+                ctx.fillStyle='gray';
+                
+                ctx.fillRect(x, y, 20, 20);
+                const newRect = {
+                    x: x,
+                    y: y,
+                    width: this.width,
+                    height: this.height
+                };
+                return newRect;
+            }
+            growTheSnake() {
+                const lastRectTopLeft = this.Rectangles[this.Rectangles.length - 1].x;
+                const lastRectTopRight = this.Rectangles[this.Rectangles.length - 1].x + 20;
+                const lastRectBottomLeft = this.Rectangles[this.Rectangles.length - 1].y;
+                const lastRectBottomRight = this.Rectangles[this.Rectangles.length - 1].y + 20;
+
+                this.Rectangles.push(this.createRect(lastRectTopLeft - 20, lastRectBottomLeft));
+            }
+
+
+        }
+
+        /* 
+        document.addEventListener('keyup', event => {
+            switch (event.code) {
+    case 'ArrowRight':
+                    this.Rectangles.push(this.createRect(this.Rectangles[this.i].x+20,this.Rectangles[this.i].y));
+        break;
+          case 'ArrowRight':
+                    this.Rectangles.push(this.createRect(this.Rectangles[this.i].x+20,this.Rectangles[this.i].y));
+        break;
+
+
+    default:
+        break;
+}
+        
+        */
+
+
+
+        /*
+        1. gidiş yönüne bak
+        eğer
+            sağa gidiyorsa:
+                    this.Rectangles.push(this.createRect(this.Rectangles[this.i].x-20,this.Rectangles[this.i].y));
+            sola gidiyorsa:
+                    this.Rectangles.push(this.createRect(this.Rectangles[this.i].x+20,this.Rectangles[this.i].y));
+            aşağı gidiyorsa:
+                    this.Rectangles.push(this.createRect(this.Rectangles[this.i].x,this.Rectangles[this.i].y-20));
+            yukarı gidiyorsa:
+                    this.Rectangles.push(this.createRect(this.Rectangles[this.i].x,this.Rectangles[this.i].y+20));
+
+                
+        */
+
+        var c = document.getElementById("canvas");
+        var ctx = c.getContext("2d");
+
+        const game = new Game();
+        game.start();
+    </script>
+</body>
+
+</html>
